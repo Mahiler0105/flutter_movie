@@ -27,7 +27,24 @@ class MovieSearchDelegate extends SearchDelegate {
 
   @override
   Widget buildResults(BuildContext context) {
-    return Text("BUILD RESULT");
+    final moviesProvider = Provider.of<MoviesProvider>(context);
+    if (moviesProvider.onSearchMovie.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: const <Widget>[
+            Icon(Icons.priority_high, size: 80),
+            Text('No se encontraron peliculas'),
+          ],
+        ),
+      );
+    }
+    return ListView.builder(
+      itemCount: moviesProvider.onSearchMovie.length,
+      itemBuilder: (_, int key) {
+        return _SearchItemMovie(movie: (moviesProvider.onSearchMovie[key]));
+      },
+    );
   }
 
   @override
@@ -42,14 +59,27 @@ class MovieSearchDelegate extends SearchDelegate {
       );
     }
     final moviesProvider = Provider.of<MoviesProvider>(context);
-    moviesProvider.getSuggestionByQuery(query);
+    if (moviesProvider.lastQuery != query) {
+      moviesProvider.getSuggestionByQuery(query);
+    }
     return StreamBuilder(
         stream: moviesProvider.suggestionStream,
         initialData: moviesProvider.onSearchMovie,
-        builder: (_, AsyncSnapshot<List<Movie>> snap) {
-          if (!snap.hasData) {
+        builder: (_, AsyncSnapshot<List<Movie>?> snap) {
+          if (snap.data == null) {
             return const Center(
               child: CircularProgressIndicator(),
+            );
+          }
+          if (snap.data!.isEmpty) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: const <Widget>[
+                  Icon(Icons.priority_high, size: 80),
+                  Text('No se encontraron peliculas'),
+                ],
+              ),
             );
           }
           final List<Movie> movies = snap.data!;
