@@ -1,4 +1,4 @@
-# leriet_movie
+# flutter_movie
 
 A new Flutter project.
 
