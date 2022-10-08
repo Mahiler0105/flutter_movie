@@ -50,8 +50,6 @@ class MyApp extends StatelessWidget {
           case '/':
             return PageTransition(
               child: const HomeScreen(),
-              // duration: Duration(seconds: 1),
-              // alignment: Alignment.center,
               type: PageTransitionType.rightToLeft,
               settings: settings,
             );
